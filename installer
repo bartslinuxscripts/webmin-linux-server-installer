@@ -1,0 +1,76 @@
+#!/bin/bash
+clear
+
+releaseOS=$(gawk -F= '/^NAME/{print $2}' /etc/os-release)
+
+echo -e "\033[37m"
+echo " ╔═══════════════════════════════════════════════════════╗"
+echo " ║ Bart's Linux Scripts ║ Webmin installer               ║"
+echo " ╚═══════════════════════════════════════════════════════╝"
+echo " "
+echo -e " * Checking if Fedora / CentOS / Debian / Ubuntu.."
+
+if [[ $releaseOS == *"Fedora"* ]]; then
+  echo -e "\033[32m   Fedora"
+  echo -e "\033[37m"
+  osRoot="yum"
+elif [[ $releaseOS == *"CentOS"* ]]; then
+  echo -e "\033[32m   CentOS"
+  echo -e "\033[37m"
+  osRoot="yum"
+elif [[ $releaseOS == *"Debian"* ]]; then
+  echo -e "\033[32m   Debian"
+  echo -e "\033[37m"
+  osRoot="apt"
+elif [[ $releaseOS == *"Ubuntu"* ]]; then
+  echo -e "\033[32m   Ubuntu"
+  echo -e "\033[37m"
+  osRoot="apt"
+else
+  echo -e "\033[31m   Unsupported :("
+  exit
+fi
+
+if [ $osRoot == "yum" ]; then
+  echo -e " * Updating package database.. "
+  yum -y update
+  echo -e "\033[32m   Done!"
+  echo -e "\033[37m"
+
+  echo -e " * Installing dependancies.. "
+  yum -y install wget perl perl-Net-SSLeay openssl perl-IO-Tty >/dev/null
+  echo -e "\033[32m   Done!"
+  echo -e "\033[37m"
+
+  echo -e " * Downloading the Webmin package.. "
+  wget -O webmin.rpm http://prdownloads.sourceforge.net/webadmin/webmin-1.750-1.noarch.rpm >/dev/null
+  echo -e "\033[32m   Done!"
+  echo -e "\033[37m"
+
+  echo -e " * Installing the Webmin package.. "
+  rpm -i webmin.rpm
+  rm webmin.deb
+  echo -e "\033[32m   Done!"
+  echo -e "\033[37m"
+elif [ $osRoot == "apt" ]; then
+  echo -e " * Updating package database.. "
+  apt-get -y update
+  echo -e "\033[32m   Done!"
+  echo -e "\033[37m"
+
+  echo -e " * Installing dependancies.. "
+  apt-get -y install perl wget libnet-ssleay-perl openssl libauthen-pam-perl libpam-runtime libio-pty-perl apt-show-versions python >/dev/null
+  echo -e "\033[32m   Done!"
+  echo -e "\033[37m"
+
+  echo -e " * Downloading the Webmin package.. "
+  wget -O webmin.deb http://prdownloads.sourceforge.net/webadmin/webmin_1.750_all.deb >/dev/null
+  echo -e "\033[32m   Done!"
+  echo -e "\033[37m"
+
+  echo -e " * Installing the Webmin package.. "
+  dpkg -i webmin.deb
+  rm webmin.deb
+  echo -e "\033[32m   Done!"
+  echo -e "\033[37m"
+fi
